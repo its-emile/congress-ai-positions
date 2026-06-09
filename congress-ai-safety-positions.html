@@ -388,7 +388,67 @@
 </header>
 
 <main>
+<section class="panel" id="control-panel">
+    <div class="onboarding">
+      <strong>Before you begin.</strong> This artifact runs all research in your browser using Claude models accessed through the Claude.ai runtime (no API key needed). Each seat consumes ~2 model calls (Sonnet 4.5 with web_search for findings, Opus 4.5 for grading). A full 535-seat run is substantial and will be bottlenecked by Claude.ai's rate limits — progress is saved to localStorage after every seat, so you can pause and resume later. When a chamber is sufficiently populated, Opus 4.6 performs a single harmonization pass over the chamber's stats + summaries.
+    </div>
 
+    <div>
+      <h2>Run controls</h2>
+
+      <label for="chamber-select">Chamber</label>
+      <select id="chamber-select">
+        <option value="senate">Senate (100 seats)</option>
+        <option value="house">House (431 seated · 3 vacancies)</option>
+      </select>
+
+      <label style="margin-top: 10px;" for="priority-select">Prioritize</label>
+      <select id="priority-select">
+        <option value="priority">High-signal first (leadership, AI committees)</option>
+        <option value="alpha">Alphabetical</option>
+        <option value="state">By state</option>
+      </select>
+
+      <label style="margin-top: 10px;" for="limit-input">Max seats this run (0 = all)</label>
+      <input type="text" id="limit-input" value="0" class="mono" />
+
+      <div class="actions">
+        <button id="run-btn">▶ Start research</button>
+        <button id="pause-btn" class="ghost" disabled>⏸ Pause</button>
+        <button id="harmonize-btn" class="ghost">⎈ Harmonize chamber</button>
+      </div>
+    </div>
+
+    <div>
+      <h2>Data</h2>
+      <label for="concurrency-input">API concurrency (1–8)</label>
+      <input type="number" id="concurrency-input" value="1" min="1" max="8" step="1" class="mono" style="max-width: 120px" />
+      <label style="margin-top: 8px;">Storage (localStorage)</label>
+      <div id="storage-info" class="mono" style="font-size: 12px; color: var(--mute);">—</div>
+
+      <div class="actions">
+        <button id="export-btn" class="ghost">⬇ Export JSON</button>
+        <button id="import-btn" class="ghost">⬆ Import JSON</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none" />
+        <button id="reset-btn" class="danger">↺ Reset chamber</button>
+      </div>
+    </div>
+
+    <div class="progress-box">
+      <div class="progress-bars">
+        <div>
+          <div class="pbar-label"><span>Senate</span> <span id="senate-progress-text">0 / 100</span></div>
+          <div class="pbar"><span id="senate-pbar" style="width: 0%"></span></div>
+        </div>
+        <div>
+          <div class="pbar-label"><span>House</span> <span id="house-progress-text">0 / 431</span></div>
+          <div class="pbar"><span id="house-pbar" style="width: 0%"></span></div>
+        </div>
+      </div>
+      <div class="log" id="log"></div>
+    </div>
+  </section>
+  
   <nav class="chamber-tabs" id="chamber-tabs">
     <button class="active" data-chamber="senate">The Senate</button>
     <button data-chamber="house">The House</button>
